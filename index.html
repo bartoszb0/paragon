@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <title>Paragon</title>
+      <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+      <div class="paragonParent">
+
+        <div class="paragon">
+
+          <div class="header">
+            <hr>
+              PARAGON
+            <hr>
+          </div>
+
+          <div class="content">
+            <table>
+              <tr>
+                <th>LP</th>
+                <th>NAZWA</th>
+                <th>ILOŚĆ</th>
+                <th>CENA</th>
+                <th>SUMA</th>
+              </tr>
+            </table>
+            <hr>
+            <div class="sumDiv">
+              RAZEM: <span id="sum"></span>
+            </div>
+          </div>
+
+          <div class="add">
+            <form>
+              <select class="addControl" id="selectControl" name="product" required>
+                <option value="" selected disabled>Produkt</option>
+              </select>
+              <input class="quantityControl" type="number" name="quantity" step="0.5" min="" placeholder="Ilość" required>
+              <input class="addControl" type="submit">
+            </form>
+          </div>
+
+        </div>
+      </div>
+      <script src="script.js"></script>
+    </body>
+  </html>

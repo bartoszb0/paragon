@@ -21,6 +21,7 @@ const products = [
 }
 ];
 
+// TODO jak da sie wartosc 0 to produkt sie usuwa
 
 const select = document.querySelector('#selectControl');
 const form = document.querySelector('form');

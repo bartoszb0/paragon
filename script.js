@@ -38,10 +38,23 @@ products.forEach(product => {
     select.appendChild(opt);
 })
 
+let previousProduct = null;
+
 function addItem(e) {
     e.preventDefault();
     const name = e.target.querySelector('[name=product]').value
     const quantity = parseFloat(e.target.querySelector('[name=quantity]').value)
+
+    if (previousProduct === name) {
+        const allItems = [...document.querySelectorAll('[name=productQuantity]')];
+
+        const lastItem = allItems[allItems.length - 1];
+        const currentQuantity = parseFloat(lastItem.innerHTML);
+        lastItem.innerHTML = currentQuantity + quantity;
+        updatePrice(lastItem);
+        this.reset();
+        return;
+    }
 
     products.forEach(product => {
         if (name === product.name) {
@@ -65,10 +78,11 @@ function addItem(e) {
             shownSum.innerHTML = `${price.toFixed(2)}zł`;
             shownSum.setAttribute('name', 'productSum');
 
+            previousProduct = product.name
             updateSum();
+            this.reset();
         }
     })
-    this.reset();
 }
 
 function editQuantity(e) {

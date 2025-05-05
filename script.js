@@ -28,7 +28,14 @@ const form = document.querySelector('form');
 const table = document.querySelector('table');
 const sumPrice = document.querySelector('#sum');
 
-const basket = []
+let previousProduct = null;
+
+const basket = JSON.parse(localStorage.getItem('basket'));
+if (basket.length >= 1) {
+    basket.forEach(product => {
+        addItem(null, product.name, product.quantity)
+    });
+}
 
 updateSum();
 
@@ -39,12 +46,15 @@ products.forEach(product => {
     select.appendChild(opt);
 })
 
-let previousProduct = null;
 
-function addItem(e) {
-    e.preventDefault();
-    const name = e.target.querySelector('[name=product]').value
-    const quantity = parseFloat(e.target.querySelector('[name=quantity]').value)
+function addItem(e,
+    name=e.target.querySelector('[name=product]').value,
+    quantity=parseFloat(e.target.querySelector('[name=quantity]').value)
+) {
+
+    if (e != null) {
+        e.preventDefault();
+    }
 
     if (previousProduct === name) {
         const allItems = [...document.querySelectorAll('[name=productQuantity]')];
@@ -59,11 +69,12 @@ function addItem(e) {
 
     products.forEach(product => {
         if (name === product.name) {
-            basket.push(product);
 
             let price = parseFloat(product.price * quantity)
             newRow = table.insertRow()
-            newRow.insertCell().innerHTML = `${basket.length}`;
+
+            const shownLp = newRow.insertCell();
+            shownLp.setAttribute('name', 'productLp'); 
 
             const shownName = newRow.insertCell();
             shownName.innerHTML = name;
@@ -83,13 +94,18 @@ function addItem(e) {
             shownSum.setAttribute('name', 'productSum');
 
             previousProduct = product.name
+            updatePositions();
             updateSum();
-            this.reset();
+
+            if (e) {
+                this.reset();
+            }
         }
     })
 }
 
 function editQuantity(e) {
+    const cell = e.target
     const oldValue = e.target.innerHTML
     const input = document.createElement('input');
     input.value = oldValue
@@ -101,11 +117,19 @@ function editQuantity(e) {
             if (parseFloat(input.value) === 0 || !input.value) {
                 input.parentElement.remove();
                 let allProducts = document.querySelectorAll('[name=productName]');
-                previousProduct = (allProducts[allProducts.length - 1].innerHTML);
+                let lastProduct = allProducts[allProducts.length - 1];
+                if (lastProduct) {
+                    previousProduct = (allProducts[allProducts.length - 1].innerHTML);
+                } else {
+                    previousProduct = null;
+                }
+                updatePositions();
+                updateSum();
+                return;
             }
-            this.innerHTML = input.value;
-            input.replaceWith(this);
-            updatePrice(this);
+            input.replaceWith(cell);
+            cell.innerHTML = input.value;
+            updatePrice(cell);
         }
     })
 }
@@ -143,6 +167,27 @@ function updateSum() {
         let newSum = 0;
         allPrices.forEach(price => newSum += parseFloat(price.innerHTML))
         sumPrice.innerHTML = `${newSum.toFixed(2)}zł`;
+    }
+
+    const allRows = [...document.querySelectorAll('table tr')];
+    const basket = [];
+    allRows.slice(1).forEach(row => {
+        let name = row.querySelector('[name=productName]').innerHTML;
+        let quantity = parseFloat(row.querySelector('[name=productQuantity').innerHTML);
+
+        basket.push({
+            name: name,
+            quantity: quantity
+        })
+    })
+    localStorage.setItem('basket', JSON.stringify(basket))
+}
+
+function updatePositions() {
+    const allProducts = document.querySelectorAll('[name=productLp]');
+    
+    for (let i = 0; i < allProducts.length ; i++) {
+        allProducts[i].innerHTML = i + 1;
     }
 }
 

@@ -64,7 +64,10 @@ function addItem(e) {
             let price = parseFloat(product.price * quantity)
             newRow = table.insertRow()
             newRow.insertCell().innerHTML = `${basket.length}`;
-            newRow.insertCell().innerHTML = name;
+
+            const shownName = newRow.insertCell();
+            shownName.innerHTML = name;
+            shownName.setAttribute('name', 'productName');
 
             const shownQuantity = newRow.insertCell();
             shownQuantity.innerHTML = quantity;
@@ -92,8 +95,14 @@ function editQuantity(e) {
     input.value = oldValue
     input.classList.add('quantityControl')
     e.target.replaceWith(input);
+    input.focus();
     input.addEventListener('keyup', (e) => {
         if (e.key === 'Enter' && validateNewQ(input.value)) {
+            if (parseFloat(input.value) === 0 || !input.value) {
+                input.parentElement.remove();
+                let allProducts = document.querySelectorAll('[name=productName]');
+                previousProduct = (allProducts[allProducts.length - 1].innerHTML);
+            }
             this.innerHTML = input.value;
             input.replaceWith(this);
             updatePrice(this);
@@ -102,6 +111,9 @@ function editQuantity(e) {
 }
 
 function validateNewQ(input) {
+    if (parseFloat(input) === 0 || !input) {
+        return true
+    }
     if (!parseFloat(input) || (input % 0.5)) {
         return false
     } else {
